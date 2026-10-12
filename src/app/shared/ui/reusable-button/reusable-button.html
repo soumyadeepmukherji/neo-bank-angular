@@ -1,0 +1,16 @@
+<button
+  [type]="buttonType"
+  class="reusable-button"
+  [class.primary]="variant === 'primary'"
+  [class.secondary]="variant === 'secondary'"
+  [class.outline]="variant === 'outline'"
+  [class.danger]="variant === 'danger'"
+  [class.small]="size === 'small'"
+  [class.medium]="size === 'medium'"
+  [class.large]="size === 'large'"
+  [class.full-width]="fullWidth"
+  [disabled]="disabled"
+  (click)="onClick($event)"
+>
+  <ng-content></ng-content>
+</button>
