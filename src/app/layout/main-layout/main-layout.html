@@ -1,0 +1,22 @@
+<div class="app-shell static-app">
+    <app-sidebar></app-sidebar>
+
+    <div class="main-shell">
+    <header class="topbar">
+        <label class="menu-btn" for="nav-toggle" aria-label="Open navigation"><svg class="icon"><use href="#i-menu" /></svg></label>
+        <div class="search">
+        <svg class="icon"><use href="#i-search" /></svg>
+        <input placeholder="Search transactions, features..." aria-label="Search" />
+        <kbd>⌘ K</kbd>
+        </div>
+        <div class="header-actions">
+        <a class="icon-btn" href="#notifications" aria-label="Notifications"><svg class="icon"><use href="#i-bell" /></svg><span class="notification-dot"></span></a>
+        <div class="profile"><span class="avatar">AM</span><div><strong>Arjun Mehta</strong><span>Customer</span></div></div>
+        </div>
+    </header>
+
+    <main class="content">
+        <router-outlet></router-outlet>
+    </main>
+    </div>
+</div>
