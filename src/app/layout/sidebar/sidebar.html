@@ -1,1 +1,19 @@
-<p>sidebar works!</p>
+    <input class="nav-toggle" type="checkbox" id="nav-toggle" />
+    <aside class="sidebar">
+    <div class="side-brand">
+        <span class="brand-mark">N</span><span class="brand-name">Neo<span>Bank</span></span>
+        <label class="mobile-close" for="nav-toggle" aria-label="Close navigation">×</label>
+    </div>
+    <span class="role-label">PERSONAL BANKING</span>
+    <nav aria-label="Primary navigation">
+        <a routerLink="/dashboard"><svg><use href="#i-grid" /></svg><span>Dashboard</span></a>
+        <a routerLink="/accounts"><svg><use href="#i-wallet" /></svg><span>Accounts</span></a>
+        <a routerLink="/beneficiaries"><svg><use href="#i-users" /></svg><span>Beneficiaries</span></a>
+        <a routerLink="/statements"><svg><use href="#i-send" /></svg><span>Statements</span></a>
+    </nav>
+    <div class="side-security">
+        <svg class="icon"><use href="#i-shield" /></svg>
+        <div><strong>You're protected</strong><span>Last login: Today, 09:42</span></div>
+    </div>
+    <a class="side-help" href="#login"><span class="avatar small">AM</span><span><strong>Arjun Mehta</strong><small>Secure logout</small></span></a>
+    </aside>

@@ -1,0 +1,140 @@
+<section class="static-login" id="login">
+
+  <div class="login-art">
+
+    <div class="login-brand">
+      <span class="brand-mark large">N</span>
+      <span class="brand-name">Neo<span>Bank</span></span>
+    </div>
+
+    <div class="trust-copy">
+
+      <span class="badge info">
+        <span class="badge-dot"></span>
+        Trusted digital banking
+      </span>
+
+      <h1>
+        Banking that moves<br />
+        at your pace.
+      </h1>
+
+      <p>
+        Securely manage your money, make simulated transfers and unlock smarter financial insights.
+      </p>
+
+      <div class="trust-row">
+
+        <div>
+          <svg class="icon">
+            <use href="#i-shield" />
+          </svg>
+
+          <strong>Bank-grade security</strong>
+          <span>Protected every step</span>
+        </div>
+
+        <div>
+          <svg class="icon">
+            <use href="#i-sparkles" />
+          </svg>
+
+          <strong>Smart insights</strong>
+          <span>Clear, useful guidance</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="login-panel">
+
+    <form
+      class="login-box"
+      [formGroup]="loginForm"
+      (ngSubmit)="login()">
+
+      <div class="mobile-login-brand">
+        <span class="brand-mark">N</span>
+        <span class="brand-name">Neo<span>Bank</span></span>
+      </div>
+
+      <span class="eyebrow">WELCOME BACK</span>
+
+      <h2>Sign in to NeoBank</h2>
+
+      <p class="muted">
+        Enter any demo credentials to explore your account.
+      </p>
+
+      <label class="field">
+        <span>Customer ID</span>
+
+        <input
+          value="NB904821"
+          aria-label="Customer ID"
+          formControlName="customerId"
+        />
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+
+        <input
+          type="password"
+          value="demopassword"
+          aria-label="Password"
+          formControlName="password"
+        />
+      </label>
+
+      <div class="login-options">
+
+        <label>
+          <input type="checkbox" />
+          Remember customer ID
+        </label>
+
+        <a class="text-btn" href="#login">
+          Forgot password?
+        </a>
+
+      </div>
+
+      <button
+        type="submit"
+        class="btn primary login-submit">
+        Secure login
+      </button>
+
+      @if (loginError) {
+        <p class="login-error">
+          Invalid Customer ID or Password.
+        </p>
+      }
+
+      <div class="security-note">
+
+        <svg class="icon">
+          <use href="#i-shield" />
+        </svg>
+
+        <span>
+          Your session is protected with 256-bit encryption.
+          Never share your password or OTP.
+        </span>
+
+      </div>
+
+    </form>
+
+    <p class="login-footer">
+      © 2025 NeoBank · Privacy · Security
+    </p>
+
+  </div>
+
+</section>

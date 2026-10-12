@@ -1,0 +1,26 @@
+.nb-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 96px;
+  padding: 24px;
+  color: var(--muted, #667085);
+  font-size: 13px;
+}
+.nb-loading__spinner {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border: 3px solid var(--blue-light, #eaf2ff);
+  border-top-color: var(--blue, #175cd3);
+  border-radius: 50%;
+  animation: nb-spin .75s linear infinite;
+}
+.nb-loading__spinner--sm { width: 16px; height: 16px; border-width: 2px; }
+.nb-loading__spinner--lg { width: 34px; height: 34px; border-width: 4px; }
+.nb-loading__message { line-height: 1.5; }
+@keyframes nb-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .nb-loading__spinner { animation-duration: 1.8s; }
+}

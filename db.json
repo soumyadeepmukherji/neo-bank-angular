@@ -1,0 +1,36 @@
+
+{
+  "accounts": [
+    {
+      "id": 1,
+      "accountType": "Savings",
+      "lastFourDigits": "1234",
+      "balance": 25000,
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "accountType": "Savings",
+      "lastFourDigits": "5678",
+      "balance": 45000,
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "accountType": "Current",
+      "lastFourDigits": "9012",
+      "balance": 85000,
+      "status": "Pending"
+    },
+    {
+      "id": 4,
+      "accountType": "FD",
+      "lastFourDigits": "3456",
+      "balance": 100000,
+      "status": "Active",
+      "interestRate": 7.25,
+      "maturityDate": "2027-10-12",
+      "maturityAmount": 107250
+    }
+  ]
+}
