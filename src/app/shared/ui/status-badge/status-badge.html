@@ -1,0 +1,15 @@
+
+<span
+  class="nb-status-badge"
+  [class.nb-status-badge--success]="status === 'success'"
+  [class.nb-status-badge--warning]="status === 'warning'"
+  [class.nb-status-badge--danger]="status === 'danger'"
+  [class.nb-status-badge--info]="status === 'info'"
+  [class.nb-status-badge--neutral]="status === 'neutral'"
+>
+  @if (showDot) {
+    <span class="nb-status-badge__dot" aria-hidden="true"></span>
+  }
+
+  {{ label }}
+</span>
