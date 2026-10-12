@@ -48,6 +48,7 @@ export class AccountListComponent implements OnInit {
     this.accountService.getAccounts().subscribe({
       next: (data: Account[]) => {
         this.accounts = Array.isArray(data) ? data : [];
+        console.log(this.accounts)
 
         if (this.accounts.length === 0) {
           this.loadState = 'empty';

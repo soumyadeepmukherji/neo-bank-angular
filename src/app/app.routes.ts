@@ -31,8 +31,8 @@ export const routes: Routes = [
         {
           path: 'accounts',
           loadComponent: () =>
-            import('./features/accounts/pages/pages')
-              .then(m => m.Pages)
+            import('./features/accounts/account-list/account-list')
+              .then(m => m.AccountListComponent)
         },
         {
           path: 'beneficiaries',
