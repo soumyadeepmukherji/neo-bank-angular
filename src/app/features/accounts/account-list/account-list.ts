@@ -1,35 +1,73 @@
-import { CurrencyPipe } from '@angular/common';
+
 import { Component } from '@angular/core';
-import { Account } from '../../../core/models/account';
+import { CurrencyPipe } from '@angular/common';
+
+import {
+  Account,
+  AccountType
+} from '../../../core/models/account';
 
 @Component({
-  imports: [CurrencyPipe],
   selector: 'app-account-list',
-  styleUrl: './account-list.css',
-  templateUrl: './account-list.html',
+  standalone: true,
+  imports: [CurrencyPipe],
+  templateUrl: './account-list.html'
 })
-export class AccountList {
-   accounts: Account[] = [
+export class AccountListComponent {
+
+  accountTypes: AccountType[] = [
+    'Savings',
+    'Current',
+    'FD'
+  ];
+
+  selectedAccountType: AccountType = 'Savings';
+
+  accounts: Account[] = [
     {
       id: 1,
       accountType: 'Savings',
-      lastFourDigits: '4582',
-      balance: 85450.75,
-      status: 'Active',
+      lastFourDigits: '1234',
+      balance: 25000,
+      status: 'Active'
     },
     {
       id: 2,
-      accountType: 'Current',
-      lastFourDigits: '7821',
-      balance: 245000,
-      status: 'Active',
+      accountType: 'Savings',
+      lastFourDigits: '5678',
+      balance: 45000,
+      status: 'Active'
     },
     {
       id: 3,
-      accountType: 'FD',
-      lastFourDigits: '9136',
-      balance: 150000,
-      status: 'Matured',
+      accountType: 'Current',
+      lastFourDigits: '9012',
+      balance: 85000,
+      status: 'Pending'
     },
+    {
+      id: 4,
+      accountType: 'FD',
+      lastFourDigits: '3456',
+      balance: 100000,
+      status: 'Matured'
+    }
   ];
+
+  selectAccountType(type: AccountType): void {
+    this.selectedAccountType = type;
+  }
+
+  get filteredAccounts(): Account[] {
+    return this.accounts.filter(
+      account => account.accountType === this.selectedAccountType
+    );
+  }
+
+  get totalBalance(): number {
+    return this.filteredAccounts.reduce(
+      (total, account) => total + account.balance,
+      0
+    );
+  }
 }
