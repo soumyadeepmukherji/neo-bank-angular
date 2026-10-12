@@ -1,143 +1,314 @@
-
 <section class="w-full space-y-5">
+  <!-- Page Header -->
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-widest text-blue-600">Banking Overview</p>
+    <h2 class="mt-1 text-2xl font-bold text-slate-900">My Accounts</h2>
+    <p class="mt-1 text-sm text-slate-500">Select an account to view its details.</p>
+  </div>
 
-  <!-- Banking Overview -->
-  <div
-    class="overflow-hidden rounded-2xl bg-linear-to-r from-slate-900 via-blue-950 to-blue-800 p-6 shadow-lg sm:p-8"
-  >
-    <p
-      class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300"
+  <!-- Loading State -->
+  @if (loadState === 'loading') {
+    <div
+      class="rounded-xl border border-slate-200 bg-white p-8 text-center"
+      role="status"
+      aria-live="polite"
     >
-      Banking Overview
-    </p>
+      <div
+        class="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600"
+      ></div>
 
-    <h2
-      class="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
-    >
-      My Accounts
-    </h2>
+      <p class="mt-4 font-medium text-slate-800">Loading your accounts...</p>
+      <p class="mt-1 text-sm text-slate-500">
+        Please wait while we retrieve your account information.
+      </p>
+    </div>
+  }
 
-    <p class="mt-2 text-sm text-blue-100 sm:text-base">
-      Your money, organized in one place.
-    </p>
+  <!-- Recoverable Error State -->
+  @else if (loadState === 'error') {
+    <div class="rounded-xl border border-red-200 bg-white p-6 text-center" role="alert">
+      <h3 class="font-semibold text-slate-900">Unable to load accounts</h3>
 
+      <p class="mt-2 text-sm text-slate-500">
+        We could not retrieve your accounts. Please try again.
+      </p>
+
+      <button
+        type="button"
+        (click)="loadAccounts()"
+        class="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+      >
+        Try Again
+      </button>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @else if (loadState === 'empty') {
+    <div class="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center">
+      <h3 class="font-semibold text-slate-800">No accounts available</h3>
+
+      <p class="mt-2 text-sm text-slate-500">There are currently no accounts to display.</p>
+
+      <button
+        type="button"
+        (click)="loadAccounts()"
+        class="mt-4 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+      >
+        Refresh
+      </button>
+    </div>
+  }
+
+  <!-- Existing Account UI: show only after successful retrieval -->
+  @else if (loadState === 'success') {
     <!-- Account Type Filters -->
-    <div class="mt-5 flex flex-wrap gap-2">
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-4">
       @for (type of accountTypes; track type) {
         <button
           type="button"
           (click)="selectAccountType(type)"
-          class="rounded-full px-4 py-2 text-xs font-semibold transition duration-200"
-          [class.bg-blue-500]="selectedAccountType === type"
+          class="rounded-lg px-4 py-2 text-sm font-medium transition"
+          [class.bg-blue-600]="selectedAccountType === type"
           [class.text-white]="selectedAccountType === type"
-          [class.ring-1]="selectedAccountType === type"
-          [class.ring-blue-300]="selectedAccountType === type"
-          [class.bg-white-10]="selectedAccountType !== type"
-          [class.text-blue-100]="selectedAccountType !== type"
-          [class.hover:bg-white-20]="selectedAccountType !== type"
+          [class.bg-slate-100]="selectedAccountType !== type"
+          [class.text-slate-600]="selectedAccountType !== type"
         >
           {{ type === 'FD' ? 'Fixed Deposit' : type }}
         </button>
       }
     </div>
-  </div>
 
-  <!-- Balance Summary -->
-  <div
-    class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-  >
-    <p class="text-sm font-medium text-slate-500">
-      Total
-      {{ selectedAccountType === 'FD' ? 'Fixed Deposit' : selectedAccountType }}
-      Balance
-    </p>
+    <!-- Account Selection Cards -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      @for (account of filteredAccounts; track account.id) {
+        <button
+          type="button"
+          (click)="selectAccount(account)"
+          class="w-full rounded-xl border bg-white p-5 text-left shadow-sm transition hover:border-blue-300 hover:shadow-md"
+          [class.border-blue-600]="selectedAccountId === account.id"
+          [class.ring-1]="selectedAccountId === account.id"
+          [class.ring-blue-600]="selectedAccountId === account.id"
+          [class.border-slate-200]="selectedAccountId !== account.id"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Account Type</p>
+              <h3 class="mt-1 text-base font-semibold text-slate-900">
+                {{
+                  account.accountType === 'FD'
+                    ? 'Fixed Deposit (FD)'
+                    : account.accountType + ' Account'
+                }}
+              </h3>
+            </div>
 
-    <p class="mt-2 text-3xl font-bold text-slate-900">
-      {{ totalBalance | currency:'INR':'symbol':'1.2-2' }}
-    </p>
-
-    <p class="mt-2 text-sm text-slate-500">
-      {{ filteredAccounts.length }}
-      {{ filteredAccounts.length === 1 ? 'account' : 'accounts' }} found
-    </p>
-  </div>
-
-  <!-- Account Cards -->
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-
-    @for (account of filteredAccounts; track account.id) {
-      <article
-        class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md"
-      >
-
-        <!-- Account Type and Status -->
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <p class="text-sm text-slate-500">
-              Account Type
-            </p>
-
-            <h3 class="mt-1 text-lg font-semibold text-slate-900">
-              {{
-                account.accountType === 'FD'
-                  ? 'Fixed Deposit (FD)'
-                  : account.accountType + ' Account'
-              }}
-            </h3>
+            <span
+              class="rounded-full px-3 py-1 text-xs font-semibold"
+              [class.bg-emerald-100]="account.status === 'Active'"
+              [class.text-emerald-700]="account.status === 'Active'"
+              [class.bg-amber-100]="account.status === 'Pending'"
+              [class.text-amber-700]="account.status === 'Pending'"
+              [class.bg-blue-100]="account.status === 'Matured'"
+              [class.text-blue-700]="account.status === 'Matured'"
+            >
+              {{ account.status }}
+            </span>
           </div>
 
-          <span
-            class="rounded-full px-3 py-1 text-xs font-medium"
-            [class.bg-emerald-100]="account.status === 'Active'"
-            [class.text-emerald-700]="account.status === 'Active'"
-            [class.bg-amber-100]="account.status === 'Pending'"
-            [class.text-amber-700]="account.status === 'Pending'"
-            [class.bg-blue-100]="account.status === 'Matured'"
-            [class.text-blue-700]="account.status === 'Matured'"
-          >
-            {{ account.status }}
-          </span>
-        </div>
-
-        <!-- Balance -->
-        <div class="mt-6">
-          <p class="text-sm text-slate-500">
-            Available Balance
-          </p>
-
+          <p class="mt-5 text-sm text-slate-500">Balance</p>
           <p class="mt-1 text-2xl font-bold text-slate-900">
-            {{ account.balance | currency:'INR':'symbol':'1.2-2' }}
+            {{ account.balance | currency: 'INR' : 'symbol' : '1.2-2' }}
           </p>
+
+          <div class="mt-4 border-t border-slate-100 pt-3">
+            <p class="text-xs text-slate-500">Account Number</p>
+            <p class="mt-1 font-mono text-sm tracking-wider text-slate-700">
+              XXXX XXXX {{ account.lastFourDigits }}
+            </p>
+          </div>
+
+          @if (selectedAccountId === account.id) {
+            <p class="mt-3 text-xs font-semibold text-blue-600">Selected account</p>
+          }
+        </button>
+      } @empty {
+        <div class="col-span-full rounded-xl border border-dashed border-slate-300 p-8 text-center">
+          <p class="font-medium text-slate-700">No accounts available</p>
+          <p class="mt-1 text-sm text-slate-500">No accounts found for this category.</p>
         </div>
+      }
+    </div>
 
-        <!-- Masked Account Number -->
-        <div class="mt-5 border-t border-slate-100 pt-4">
-          <p class="text-xs text-slate-500">
-            Account Number
-          </p>
-
-          <p class="mt-1 font-mono text-sm tracking-wider text-slate-700">
+    <!-- Selected Account Details -->
+    @if (selectedAccount; as account) {
+      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <!-- Details Header -->
+        <div class="border-b border-slate-200 p-5">
+          <p class="text-sm text-slate-500">Selected Account</p>
+          <h3 class="mt-1 text-xl font-bold text-slate-900">
+            {{
+              account.accountType === 'FD'
+                ? 'Fixed Deposit Details'
+                : account.accountType + ' Account Details'
+            }}
+          </h3>
+          <p class="mt-1 font-mono text-sm text-slate-500">
             XXXX XXXX {{ account.lastFourDigits }}
           </p>
         </div>
 
-      </article>
-    } @empty {
-      <div
-        class="col-span-full rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center"
-      >
-        <p class="font-medium text-slate-700">
-          No
-          {{ selectedAccountType === 'FD' ? 'Fixed Deposit' : selectedAccountType }}
-          accounts available
-        </p>
+        <!-- Detail Tabs -->
+        <div class="flex flex-wrap gap-5 border-b border-slate-200 px-5">
+          @for (tab of ['Overview', 'Transactions', 'Details']; track tab) {
+            <button
+              type="button"
+              (click)="selectTab($any(tab))"
+              class="border-b-2 px-1 py-3 text-sm font-medium transition"
+              [class.border-blue-600]="activeTab === tab"
+              [class.text-blue-600]="activeTab === tab"
+              [class.border-transparent]="activeTab !== tab"
+              [class.text-slate-500]="activeTab !== tab"
+            >
+              {{ tab }}
+            </button>
+          }
+        </div>
 
-        <p class="mt-1 text-sm text-slate-500">
-          Your accounts will appear here when available.
-        </p>
+        <div class="p-5">
+          <!-- Overview Tab -->
+          @if (activeTab === 'Overview') {
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="rounded-lg bg-slate-50 p-4">
+                <p class="text-sm text-slate-500">Account Type</p>
+                <p class="mt-1 font-semibold text-slate-900">
+                  {{ account.accountType === 'FD' ? 'Fixed Deposit' : account.accountType }}
+                </p>
+              </div>
+
+              <div class="rounded-lg bg-slate-50 p-4">
+                <p class="text-sm text-slate-500">Balance</p>
+                <p class="mt-1 font-semibold text-slate-900">
+                  {{ account.balance | currency: 'INR' : 'symbol' : '1.2-2' }}
+                </p>
+              </div>
+
+              <div class="rounded-lg bg-slate-50 p-4">
+                <p class="text-sm text-slate-500">Account Status</p>
+                <p class="mt-1 font-semibold text-slate-900">
+                  {{ account.status }}
+                </p>
+              </div>
+
+              @if (account.accountType === 'FD') {
+                <div class="rounded-lg bg-blue-50 p-4">
+                  <p class="text-sm text-blue-700">Interest Rate</p>
+                  <p class="mt-1 text-lg font-bold text-blue-900">
+                    {{ account.interestRate ?? 'N/A' }}{{ account.interestRate != null ? '%' : '' }}
+                  </p>
+                </div>
+
+                <div class="rounded-lg bg-blue-50 p-4">
+                  <p class="text-sm text-blue-700">Maturity Date</p>
+                  <p class="mt-1 font-semibold text-blue-900">
+                    {{ account.maturityDate ? (account.maturityDate | date: 'mediumDate') : 'N/A' }}
+                  </p>
+                </div>
+
+                <div class="rounded-lg bg-blue-50 p-4">
+                  <p class="text-sm text-blue-700">Maturity Amount</p>
+                  <p class="mt-1 text-lg font-bold text-blue-900">
+                    {{
+                      account.maturityAmount != null
+                        ? (account.maturityAmount | currency: 'INR' : 'symbol' : '1.2-2')
+                        : 'N/A'
+                    }}
+                  </p>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Transactions Tab -->
+          @if (activeTab === 'Transactions') {
+            <div class="py-6 text-center">
+              <p class="font-semibold text-slate-800">Transactions</p>
+              <p class="mt-2 text-sm text-slate-500">
+                Transaction history for account ending in
+                {{ account.lastFourDigits }} will appear here.
+              </p>
+              <p class="mt-1 text-xs text-slate-400">
+                Connect your transaction API to load real records.
+              </p>
+            </div>
+          }
+
+          <!-- Details Tab -->
+          @if (activeTab === 'Details') {
+            <div class="space-y-4">
+              <div class="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span class="text-sm text-slate-500">Account ID</span>
+                <span class="font-medium text-slate-900">{{ account.id }}</span>
+              </div>
+
+              <div class="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span class="text-sm text-slate-500">Account Type</span>
+                <span class="font-medium text-slate-900">
+                  {{ account.accountType === 'FD' ? 'Fixed Deposit' : account.accountType }}
+                </span>
+              </div>
+
+              <div class="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span class="text-sm text-slate-500">Account Number</span>
+                <span class="font-mono text-sm text-slate-900">
+                  XXXX XXXX {{ account.lastFourDigits }}
+                </span>
+              </div>
+
+              <div class="flex justify-between gap-4">
+                <span class="text-sm text-slate-500">Status</span>
+                <span class="font-medium text-slate-900">{{ account.status }}</span>
+              </div>
+
+              @if (account.accountType === 'FD') {
+                <div class="border-t border-slate-200 pt-4">
+                  <h4 class="font-semibold text-slate-900">Fixed Deposit Information</h4>
+
+                  <div class="mt-3 space-y-3">
+                    <div class="flex justify-between gap-4">
+                      <span class="text-sm text-slate-500">Interest Rate</span>
+                      <span class="font-medium text-slate-900">
+                        {{ account.interestRate ?? 'N/A'
+                        }}{{ account.interestRate != null ? '%' : '' }}
+                      </span>
+                    </div>
+
+                    <div class="flex justify-between gap-4">
+                      <span class="text-sm text-slate-500">Maturity Date</span>
+                      <span class="font-medium text-slate-900">
+                        {{
+                          account.maturityDate ? (account.maturityDate | date: 'mediumDate') : 'N/A'
+                        }}
+                      </span>
+                    </div>
+
+                    <div class="flex justify-between gap-4">
+                      <span class="text-sm text-slate-500">Maturity Amount</span>
+                      <span class="font-medium text-slate-900">
+                        {{
+                          account.maturityAmount != null
+                            ? (account.maturityAmount | currency: 'INR' : 'symbol' : '1.2-2')
+                            : 'N/A'
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
       </div>
     }
-
-  </div>
-
+  }
 </section>
