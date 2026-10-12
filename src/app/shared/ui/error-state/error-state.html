@@ -1,1 +1,17 @@
-<p>error-state works!</p>
+
+<div class="nb-error-state" role="alert">
+  <div class="nb-error-state__icon" aria-hidden="true">⚠️</div>
+
+  <h3 class="nb-error-state__title">{{ title }}</h3>
+
+  <p class="nb-error-state__message">{{ message }}</p>
+
+  <button
+    type="button"
+    class="btn"
+    [disabled]="retrying"
+    (click)="onRetry()"
+  >
+    {{ retrying ? 'Retrying...' : retryLabel }}
+  </button>
+</div>

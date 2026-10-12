@@ -1,0 +1,51 @@
+
+.nb-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.nb-status-badge__dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.nb-status-badge--success {
+  color: var(--success, #087a55);
+  background: #e8f7f0;
+  border-color: #b8e8d1;
+}
+
+.nb-status-badge--warning {
+  color: var(--warning, #a15c00);
+  background: #fff5df;
+  border-color: #f5dda3;
+}
+
+.nb-status-badge--danger {
+  color: var(--error, #c4324a);
+  background: #fff0f1;
+  border-color: #f4c5cb;
+}
+
+.nb-status-badge--info {
+  color: var(--blue, #175cd3);
+  background: #eaf2ff;
+  border-color: #c8dcff;
+}
+
+.nb-status-badge--neutral {
+  color: var(--muted, #667085);
+  background: #f2f4f7;
+  border-color: #e5eaf1;
+}
