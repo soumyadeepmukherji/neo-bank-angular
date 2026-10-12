@@ -1,1 +1,42 @@
-<p>confirmation-dialog works!</p>
+@if (isOpen) {
+  <div class="dialog-backdrop" (click)="onCancel()">
+    <div
+      class="confirmation-dialog"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="dialog-icon" [class.danger]="isDanger">
+        @if (isDanger) {
+          <span>!</span>
+        } @else {
+          <span>?</span>
+        }
+      </div>
+
+      <h2>{{ title }}</h2>
+
+      <p>{{ message }}</p>
+
+      <div class="dialog-actions">
+        <button
+          type="button"
+          class="cancel-button"
+          (click)="onCancel()"
+        >
+          {{ cancelText }}
+        </button>
+
+        <button
+          type="button"
+          class="confirm-button"
+          [class.danger-button]="isDanger"
+          (click)="onConfirm()"
+        >
+          {{ confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

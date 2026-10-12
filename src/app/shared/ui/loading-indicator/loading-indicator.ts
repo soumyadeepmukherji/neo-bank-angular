@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   imports: [],
@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   styleUrl: './loading-indicator.css',
   templateUrl: './loading-indicator.html',
 })
-export class LoadingIndicator {}
+export class LoadingIndicator {
+  @Input() message = 'Loading...';
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+}
