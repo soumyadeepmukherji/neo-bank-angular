@@ -1,0 +1,10 @@
+@if (showAddBeneficiary) {
+  <app-beneficiary-form
+  (beneficiarySubmit)="onBeneficiarySubmit($event)"
+  (cancel)="closeAddBeneficiary()">
+</app-beneficiary-form>
+} @else {
+  <app-beneficiary-list
+    (addBeneficiary)="openAddBeneficiary()">
+  </app-beneficiary-list>
+}

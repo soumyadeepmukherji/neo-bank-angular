@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BeneficiariesPages } from './beneficiaries.pages';
+import { BeneficiaryEmpty } from './beneficiary-empty';
 
-describe('BeneficiariesPages', () => {
-  let component: BeneficiariesPages;
-  let fixture: ComponentFixture<BeneficiariesPages>;
+describe('BeneficiaryEmpty', () => {
+  let component: BeneficiaryEmpty;
+  let fixture: ComponentFixture<BeneficiaryEmpty>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BeneficiariesPages],
+      imports: [BeneficiaryEmpty],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BeneficiariesPages);
+    fixture = TestBed.createComponent(BeneficiaryEmpty);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
