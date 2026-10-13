@@ -42,8 +42,8 @@ export const routes: Routes = [
         {
           path: 'beneficiaries',
           loadComponent: () =>
-            import('./features/beneficiaries/beneficiaries.pages/beneficiaries.pages')
-              .then(m => m.BeneficiariesPages)
+            import('./features/beneficiary/beneficiary')
+              .then(m => m.BeneficiaryComponent)
         },
         {
           path: 'statements',
