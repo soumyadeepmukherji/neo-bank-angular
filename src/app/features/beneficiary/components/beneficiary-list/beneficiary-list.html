@@ -1,0 +1,235 @@
+<section class="min-h-screen space-y-6 bg-slate-50/80 p-4 md:space-y-8 md:p-6 lg:p-8">
+  <!-- Page heading -->
+  <div
+    class="flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-7"
+  >
+    <div class="flex items-center gap-4">
+      <div
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2m16 0v-2a4 4 0 00-3-3.87M14 3.13a4 4 0 010 7.75M14 7a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      </div>
+
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">Beneficiaries</h1>
+        <p class="mt-1 text-sm leading-6 text-slate-500 md:text-base">
+          Manage your saved beneficiaries
+        </p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      (click)="onAddBeneficiary()"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/25 focus:outline-none focus:ring-4 focus:ring-blue-200 active:translate-y-0 sm:w-auto"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5" />
+      </svg>
+
+      Add Beneficiary
+    </button>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading) {
+    <div
+      class="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm"
+      role="status"
+    >
+      <div
+        class="h-10 w-10 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600"
+      ></div>
+      <p class="mt-4 text-sm font-medium text-slate-600">Loading beneficiaries...</p>
+    </div>
+  }
+
+  <!-- Error state -->
+  @else if (errorMessage) {
+    <div class="rounded-2xl border border-red-200 bg-red-50/80 p-6 shadow-sm md:p-8" role="alert">
+      <div class="flex items-start gap-4">
+        <div
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v3m0 4h.01M10.3 3.86L1.82 18a2 2 0 001.7 3h16.96a2 2 0 001.7-3L13.7 3.86a2 2 0 00-3.4 0z"
+            />
+          </svg>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold text-red-900">Unable to load beneficiaries</p>
+          <p class="mt-1 text-sm leading-6 text-red-700">{{ errorMessage }}</p>
+
+          <button
+            type="button"
+            (click)="loadBeneficiaries()"
+            class="mt-4 inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-200 active:scale-[0.98]"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @else if (beneficiaries.length === 0) {
+    <app-beneficiary-empty (addBeneficiary)="onAddBeneficiary()"> </app-beneficiary-empty>
+  }
+
+  <!-- Beneficiary cards -->
+  @else {
+    <div class="space-y-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Saved Accounts</h2>
+          <p class="mt-1 text-sm text-slate-500">
+            View beneficiary bank details and account status
+          </p>
+        </div>
+
+        <span
+          class="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm"
+        >
+          {{ beneficiaries.length }} saved
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        @for (beneficiary of beneficiaries; track beneficiary.id) {
+          <article
+            class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-slate-200/60 sm:p-6"
+          >
+            <div
+              class="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-blue-600 via-indigo-500 to-sky-400 opacity-80 transition-opacity group-hover:opacity-100"
+            ></div>
+
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex min-w-0 items-center gap-3">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-lineart-to-br from-blue-50 to-indigo-100 text-lg font-bold text-blue-700 ring-1 ring-blue-100"
+                >
+                  {{ beneficiary.name.charAt(0) }}
+                </div>
+
+                <div class="min-w-0">
+                  <h2 class="truncate text-base font-bold text-slate-900 sm:text-lg">
+                    {{ beneficiary.name }}
+                  </h2>
+                  <p class="mt-1 truncate text-sm text-slate-500">
+                    {{ beneficiary.bankName || 'Bank name not available' }}
+                  </p>
+                </div>
+              </div>
+
+              <span
+                class="shrink-0 rounded-full px-3 py-1.5 text-xs font-bold ring-1 ring-inset"
+                [ngClass]="getStatusClass(beneficiary.status)"
+              >
+                {{ beneficiary.status }}
+              </span>
+            </div>
+
+            <div
+              class="mt-6 space-y-4 rounded-xl border border-slate-100 bg-slate-50/80 p-4 sm:p-5"
+            >
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    Account Number
+                  </p>
+                  <p
+                    class="mt-2 break-all font-mono text-sm font-semibold tracking-wide text-slate-800"
+                  >
+                    {{ maskAccountNumber(beneficiary.accountNumber) }}
+                  </p>
+                </div>
+
+                <div
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-400 shadow-sm ring-1 ring-slate-200/70"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  >
+                    <rect width="18" height="14" x="3" y="5" rx="2" />
+                    <path stroke-linecap="round" d="M3 10h18M7 15h3" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="border-t border-slate-200/80"></div>
+
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    IFSC Code
+                  </p>
+                  <p
+                    class="mt-2 break-all font-mono text-sm font-semibold tracking-wide text-slate-800"
+                  >
+                    {{ beneficiary.ifsc || 'Not available' }}
+                  </p>
+                </div>
+
+                <div
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-400 shadow-sm ring-1 ring-slate-200/70"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M9 14h.01M9 18h.01M15 10h.01M15 14h.01M15 18h.01"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  }
+</section>

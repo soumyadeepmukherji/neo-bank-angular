@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { BeneficiaryComponent } from './features/beneficiary/beneficiary';
 
 export const routes: Routes = [
 
@@ -33,12 +34,16 @@ export const routes: Routes = [
           loadComponent: () =>
             import('./features/accounts/account-list/account-list')
               .then(m => m.AccountListComponent)
+  },
+    {
+    path: 'beneficiary',
+    component: BeneficiaryComponent
         },
         {
           path: 'beneficiaries',
           loadComponent: () =>
-            import('./features/beneficiaries/beneficiaries.pages/beneficiaries.pages')
-              .then(m => m.BeneficiariesPages)
+            import('./features/beneficiary/beneficiary')
+              .then(m => m.BeneficiaryComponent)
         },
         {
           path: 'statements',

@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BeneficiariesPages } from './beneficiaries.pages';
+import { ReusableButton } from './reusable-button';
 
-describe('BeneficiariesPages', () => {
-  let component: BeneficiariesPages;
-  let fixture: ComponentFixture<BeneficiariesPages>;
+describe('ReusableButton', () => {
+  let component: ReusableButton;
+  let fixture: ComponentFixture<ReusableButton>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BeneficiariesPages],
+      imports: [ReusableButton],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BeneficiariesPages);
+    fixture = TestBed.createComponent(ReusableButton);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

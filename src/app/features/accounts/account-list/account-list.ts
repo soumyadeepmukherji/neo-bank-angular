@@ -1,134 +1,144 @@
 
-import { Component, OnInit, inject } from '@angular/core';
-import { CurrencyPipe, DatePipe } from '@angular/common';
-
+import { CommonModule } from '@angular/common';
 import {
-  Account,
-  AccountTab,
-  AccountType
-} from '../../../core/models/account';
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 import { AccountService } from '../../../core/services/account';
-
-type AccountLoadState = 'loading' | 'success' | 'empty' | 'error';
+import { Account } from '../../../core/models/account';
 
 @Component({
   selector: 'app-account-list',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './account-list.html'
 })
 export class AccountListComponent implements OnInit {
+  private readonly accountService = inject(AccountService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  private accountService = inject(AccountService);
-
-  // New: account retrieval state
-  loadState: AccountLoadState = 'loading';
-
-  accountTypes: AccountType[] = ['Savings', 'Current', 'FD'];
-
-  selectedAccountType: AccountType = 'Savings';
-  selectedAccountId: number | null = null;
-  activeTab: AccountTab = 'Overview';
-
-  // Accounts now come from the service instead of hardcoded data
   accounts: Account[] = [];
+  filteredAccounts: Account[] = [];
+
+  loading = false;
+  loadState: 'loading' | 'success' | 'error' = 'loading';
+  errorMessage = '';
+
+  searchTerm = '';
+  selectedType = 'All';
+  selectedAccount: Account | null = null;
+
+  readonly accountTypes = ['All', 'Savings', 'Current', 'FD'];
 
   ngOnInit(): void {
     this.loadAccounts();
   }
 
   loadAccounts(): void {
-    // Clear old data before requesting accounts again
-    this.accounts = [];
-    this.selectedAccountId = null;
-    this.activeTab = 'Overview';
+    this.loading = true;
     this.loadState = 'loading';
+    this.errorMessage = '';
+    this.selectedType = 'All';
+    this.searchTerm = '';
 
-    this.accountService.getAccounts().subscribe({
-      next: (data: Account[]) => {
-        this.accounts = Array.isArray(data) ? data : [];
-        console.log(this.accounts)
+    this.accountService.getAccounts()
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (data: Account[]) => {
+          this.accounts = Array.isArray(data) ? data : [];
+          this.applyFilters();
 
-        if (this.accounts.length === 0) {
-          this.loadState = 'empty';
-          return;
+          this.selectedAccount =
+            this.accounts.length > 0 ? this.accounts[0] : null;
+
+          this.loadState = 'success';
+          this.cdr.detectChanges();
+
+          console.log('Accounts loaded:', this.accounts);
+        },
+        error: (error: unknown) => {
+          console.error('Failed to load accounts:', error);
+
+          this.accounts = [];
+          this.filteredAccounts = [];
+          this.selectedAccount = null;
+          this.errorMessage =
+            'Unable to load accounts. Please try again.';
+          this.loadState = 'error';
+
+          this.cdr.detectChanges();
         }
+      });
+  }
 
-        this.loadState = 'success';
+  applyFilters(): void {
+    const search = this.searchTerm.trim().toLowerCase();
 
-        // Preserve the selected account type where possible
-        const firstMatchingAccount = this.accounts.find(
-          account => account.accountType === this.selectedAccountType
-        );
+    this.filteredAccounts = this.accounts.filter(account => {
+      const type = String(account.accountType ?? '').toLowerCase();
+      const status = String(account.status ?? '').toLowerCase();
+      const id = String(account.id ?? '').toLowerCase();
+      const digits = String(account.lastFourDigits ?? '').toLowerCase();
 
-        if (firstMatchingAccount) {
-          this.selectedAccountId = firstMatchingAccount.id;
-        } else {
-          this.selectedAccountType = this.accounts[0].accountType;
-          this.selectedAccountId = this.accounts[0].id;
-        }
-      },
+      const matchesType =
+        this.selectedType === 'All' ||
+        type === this.selectedType.toLowerCase();
 
-      error: () => {
-        // Do not expose account data or backend error details
-        this.accounts = [];
-        this.selectedAccountId = null;
-        this.loadState = 'error';
-      }
+      const matchesSearch =
+        type.includes(search) ||
+        status.includes(search) ||
+        id.includes(search) ||
+        digits.includes(search);
+
+      return matchesType && matchesSearch;
     });
   }
 
-  get filteredAccounts(): Account[] {
-    if (this.loadState !== 'success') {
-      return [];
-    }
-
-    return this.accounts.filter(
-      account => account.accountType === this.selectedAccountType
-    );
+  onSearchChange(): void {
+    this.applyFilters();
   }
 
-  get selectedAccount(): Account | undefined {
-    if (this.loadState !== 'success') {
-      return undefined;
-    }
+  onTypeChange(type: string): void {
+    this.selectedType = type;
+    this.applyFilters();
+  }
 
-    return this.accounts.find(
-      account => account.id === this.selectedAccountId
-    );
+  selectAccount(account: Account): void {
+    this.selectedAccount = account;
   }
 
   get totalBalance(): number {
-    return this.filteredAccounts.reduce(
-      (total, account) => total + account.balance,
+    return this.accounts.reduce(
+      (total, account) => total + Number(account.balance || 0),
       0
     );
   }
 
-  selectAccountType(type: AccountType): void {
-    if (this.loadState !== 'success') {
-      return;
-    }
-
-    this.selectedAccountType = type;
-
-    const firstAccount = this.filteredAccounts[0];
-    this.selectedAccountId = firstAccount?.id ?? null;
-
-    // Keep the user on the Overview tab when changing account type.
-    this.activeTab = 'Overview';
+  get activeAccountsCount(): number {
+    return this.accounts.filter(
+      account => account.status?.toLowerCase() === 'active'
+    ).length;
   }
 
-  selectAccount(account: Account): void {
-    if (this.loadState !== 'success') {
-      return;
-    }
-
-    this.selectedAccountId = account.id;
+  trackByAccountId(index: number, account: Account): string | number {
+    return account.id;
   }
 
-  selectTab(tab: AccountTab): void {
-    this.activeTab = tab;
+  formatBalance(balance: number, currency = 'INR'): string {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 2
+    }).format(balance);
   }
 }
