@@ -8,7 +8,7 @@ import { ConfirmationDialog } from './shared/ui/confirmation-dialog/confirmation
 import { MainLayout } from './layout/main-layout/main-layout';
 
 @Component({
-  imports: [RouterOutlet, LoadingIndicator, EmptyState, ErrorState, StatusBadge, ConfirmationDialog,MainLayout],
+  imports: [RouterOutlet],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
