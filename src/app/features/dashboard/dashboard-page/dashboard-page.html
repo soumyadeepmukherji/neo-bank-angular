@@ -1,1 +1,174 @@
-<p>dashboard-page works!</p>
+
+<section class="page-panel" id="dashboard">
+  <div class="section-header">
+    <div>
+      <span class="eyebrow">{{ formattedDate }}</span>
+      <h1>{{ greeting }}, {{ customerName }}</h1>
+      <p>Here's what's happening with your money today.</p>
+    </div>
+
+    <a
+      class="btn secondary"
+      href="#statements"
+      (click)="downloadSummary(); $event.preventDefault()"
+    >
+      <svg class="icon small-icon">
+        <use href="#i-download" />
+      </svg>
+      <span>Download summary</span>
+    </a>
+  </div>
+
+  <div class="balance-card">
+    <div class="balance-top">
+      <div>
+        <span>Total balance</span>
+        <h2>{{ formatCurrency(totalBalance) }}</h2>
+        <p>Across {{ accounts.length }} accounts</p>
+      </div>
+      <span class="trend-pill">↗ 4.2% this month</span>
+    </div>
+
+    <div class="account-strip">
+      @for (account of accounts; track account.lastFour) {
+        <div>
+          <span class="account-icon {{ account.color }}">
+            <svg class="icon">
+              <use href="#i-wallet" />
+            </svg>
+          </span>
+          <div>
+            <span>{{ account.name }} ··{{ account.lastFour }}</span>
+            <strong>{{ formatCurrency(account.balance) }}</strong>
+          </div>
+        </div>
+      }
+      <a href="#accounts">View all accounts</a>
+    </div>
+  </div>
+
+  <div class="quick-grid">
+    <a href="#transfer">
+      <span>
+        <svg class="icon">
+          <use href="#i-send" />
+        </svg>
+      </span>
+      <strong>Transfer money</strong>
+      <small>Secure & simulated</small>
+    </a>
+
+    <a href="#beneficiaries">
+      <span>
+        <svg class="icon">
+          <use href="#i-users" />
+        </svg>
+      </span>
+      <strong>Add beneficiary</strong>
+      <small>Manage payees</small>
+    </a>
+
+    <a href="#statements">
+      <span>
+        <svg class="icon">
+          <use href="#i-file" />
+        </svg>
+      </span>
+      <strong>Get statement</strong>
+      <small>View & download</small>
+    </a>
+
+    <a href="#loans">
+      <span>
+        <svg class="icon">
+          <use href="#i-bank" />
+        </svg>
+      </span>
+      <strong>Explore loans</strong>
+      <small>Check eligibility</small>
+    </a>
+  </div>
+
+  <div class="dashboard-grid">
+    <section class="card transactions">
+      <div class="card-heading">
+        <div>
+          <h3>Recent transactions</h3>
+          <p>Your latest account activity</p>
+        </div>
+        <a href="#accounts">View all</a>
+      </div>
+
+      <div class="transaction-list">
+        @for (transaction of transactions; track transaction.id) {
+          <div class="transaction">
+            <span class="merchant-icon {{ transaction.iconClass }}">
+              {{ transaction.initials }}
+            </span>
+
+            <div>
+              <strong>{{ transaction.merchant }}</strong>
+              <span>{{ transaction.date }} · {{ transaction.category }}</span>
+            </div>
+
+            <strong [class.positive]="transaction.type === 'credit'">
+              {{ transaction.type === 'credit' ? '+' : '−' }}
+              {{ formatCurrency(transaction.amount) }}
+            </strong>
+          </div>
+        }
+      </div>
+    </section>
+
+    <div class="right-stack">
+      <section class="card insight-card">
+        <div class="card-heading">
+          <div>
+            <h3>Spending this month</h3>
+            <p>{{ spendingMonth }}</p>
+          </div>
+          <a href="#insights">View</a>
+        </div>
+
+        <div class="spend-summary">
+          <strong>{{ formatCurrency(monthlySpending) }}</strong>
+          <span>↓ {{ spendingChange }}% vs {{ previousSpendingMonth }}</span>
+        </div>
+
+        <div class="spend-bar">
+          @for (category of spendingCategories; track category.name) {
+            <i
+              [style.width.%]="category.percentage"
+              [attr.title]="category.name + ' ' + category.percentage + '%'"
+            ></i>
+          }
+        </div>
+
+        <div class="legend">
+          @for (category of spendingCategories; track category.name) {
+            <span>
+              <i [class]="category.className"></i>
+              {{ category.name }} {{ category.percentage }}%
+            </span>
+          }
+        </div>
+      </section>
+
+      <section class="card security-card">
+        <span class="shield-box">
+          <svg class="icon">
+            <use href="#i-shield" />
+          </svg>
+        </span>
+        <div>
+          <span class="badge success">
+            <span class="badge-dot"></span>
+            {{ securityStatus }}
+          </span>
+          <h3>Your account is protected</h3>
+          <p>{{ securityMessage }}</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
